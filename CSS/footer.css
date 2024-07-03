@@ -37,6 +37,25 @@ footer {
   ); /* transform: scale()으로 스케일 자체를 바꿀 수도 있다 */
 }
 
+@keyframes icons-둥-둥 {
+  0% {
+    transform: translateY(0px);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+  70% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
 .footer-icons__img {
   width: 30px;
-} /* footer icons img 크기에 대한 div */
+}
+
+.footer-icons:hover .footer-icons__img {
+  animation: 2s icons-둥-둥;
+}

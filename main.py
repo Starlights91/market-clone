@@ -11,6 +11,20 @@ import sqlite3
 con = sqlite3.connect('db.db',check_same_thread=False)  # SQLite3.connect('db.db',)파일에다가 연결, check_same_thread옵션을 False로 준다(나중에 귀찮아지는 부분을 미연에 방지하기 위함.).
 cur = con.cursor() # cur 라는 속성을 주고, con.cursor () DB에서 cursor라는 개념을 이용해서 특정 insert하거나 select할 때 사용하기 위해 세팅하는 것.
 
+#백엔드 코드가 실행될 때, CREATE TABLE을 한번 만들고, 만든 후에 데이터를 그 테이블 안에 넣을 수 있게 된다. 다만, 이렇게만 넣어주면 테이블이 이미 존재한다고 에러가 발생된다. 배포 후에도 서버가 잠깐 내려갔다 올라오게되면 그 때마다 아래의 CREATE TABLE이 들어가게되면 에러 발생.
+#이런 에러를 방지하기 위해, 테이블이 없을 때만 CREATE 될 수 있도록 조건문 IF NOT EXISTS 을 하나 넣어주면 된다.  
+cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS items (
+	            id INTEGER PRIMARY KEY,
+	            title TEXT NOT NULL,
+	            image BLOB,
+	            price INTEGER NOT NULL,
+	            description TEXT,
+	            place TEXT NOT NULL,
+	            insertAt INTEGER NOT NULL
+            );
+            """)
+
 app = FastAPI()
 
 @app.post('/items')

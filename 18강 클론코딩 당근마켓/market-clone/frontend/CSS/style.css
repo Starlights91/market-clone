@@ -1,0 +1,35 @@
+/*이 style.css안에 3개의 css파일이 import되어 하나로 뭉쳐주게 된다. 따라서 html에 아래 3개 link를 지우더라도 그대로 적용된것을 확인 할 수 있음.*/
+@import "reset.css";
+@import "header.css";
+@import "main.css";
+@import "footer.css";
+
+:root {
+  --button-primary: rgb(254, 111, 15);
+  --button-hover: rgba(254, 111, 15, 0.8);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Pretendard Variable", Pretendard, Roboto, "Noto Sans KR", "Segoe UI",
+    "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    sans-serif;
+} /*index.html에서 link에 넣은 github pretendard link 하단에 font-family(시스템에 맞춘 구성) 복붙 */
+
+.media-info-msg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh; /* vh=view width: 최종 우리가 보이는 화면에 100% 너비 */
+  display: flex; /* vh=view height: 최종 우리가 보이는 화면에 100% 높이 */
+  justify-content: center;
+  align-items: center;
+  background-color: salmon;
+}
+
+@media screen and (max-width: 500px) {
+  .media-info-msg {
+    display: none;
+  }
+}

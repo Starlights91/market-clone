@@ -72,7 +72,7 @@ async def get_image(item_id):
     image_bytes = cur.execute(f"""
                               SELECT image FROM items WHERE id={item_id}
                               """).fetchone()[0]
-      
-    return Response(content=bytes.fromhex(image_bytes))
+    #media_type='image/*' 추가: python 환경(version)이 Fly.io와 내 로컬과 다르면, 이미지가 정상적으로 불러와지지 않는 문제가 발생될 수 있기 때문에 명시해주는 것이 좋다.   
+    return Response(content=bytes.fromhex(image_bytes), media_type='image/*')
 
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend") # app.mount ("/"), 이 루트 패스는 맨 마지막에 작성해주는 것이 좋다.

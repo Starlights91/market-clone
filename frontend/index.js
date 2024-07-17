@@ -9,7 +9,7 @@ const calcTime = (timestamp) => {
   if (hour > 0) return `${hour}시간 전`;
   else if (minute > 0) return `${minute}분 전`;
   else if (second > 0) return `${second}초 전`;
-  else "방금 전";
+  else return "방금 전"; //else만 써서 시간이 undefined가 표시되어 else return으로 "방금 전"이 표시 됨.
 };
 
 //가장 마지막(최근)에 넣은 데이터가 앞(위)에 올 수 있도록 하기 위해 Array형식으로, [].reverse() 사용하면, Array를 뒤집어주는 문법.  이렇게 넣기.-->  data.reverse().forEach((obj) => {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입 페이지</title>
+  </head>
+  <body>
+    <!-- 서버쪽으로 sign up이라는 api로 보내기. 웹에서: http://127.0.0.1:8000/signup.html method를 post로-->
+    <form id="singup-form" action="/signup" method="POST">
+      <div>회원가입</div>
+      <div>
+        <!-- input 마지막에 required를 입력하면, 필수입력 값으로 설정 -->
+        <label for="id">아이디</label>
+        <input type="text" id="id" name="id" required />
+      </div>
+      <div>
+        <!-- input type에 "text"로 하면 p/w보이니까 "password"타입 사용하면 입력문자가 가려진다. -->
+        <label for="password">패스워드</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <div>
+        <!-- 패스워드 확인 추가 -->
+        <label for="password2">패스워드 확인</label>
+        <input type="password" id="password2" name="password2" required />
+      </div>
+      <div>
+        <label for="name">이름</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+      <div>
+        <label for="email">이메일</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div>
+        <button type="submit">회원 가입하기</button>
+      </div>
+      <div id="info"></div>
+    </form>
+    <!-- 비밀번호 암호화 SHA256 해시 함수 패키지-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <script src="signup.js"></script>
+  </body>
+</html>

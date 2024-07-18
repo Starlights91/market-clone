@@ -75,4 +75,11 @@ async def get_image(item_id):
     #media_type='image/*' 추가: python 환경(version)이 Fly.io와 내 로컬과 다르면, 이미지가 정상적으로 불러와지지 않는 문제가 발생될 수 있기 때문에 명시해주는 것이 좋다.   
     return Response(content=bytes.fromhex(image_bytes), media_type='image/*')
 
+#signup.html에서 form을 통해서 보내니까 post로 받아야함.
+@app.post('/signup')
+def signup(id:Annotated[str,Form()], password:Annotated[str,Form()]):
+    print(id,password)
+    return '200'
+
+
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend") # app.mount ("/"), 이 루트 패스는 맨 마지막에 작성해주는 것이 좋다.

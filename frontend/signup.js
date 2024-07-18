@@ -1,4 +1,4 @@
-const form = document.querySelector("#singup-form");
+const form = document.querySelector("#signup-form");
 
 // 로직: (checkPassword)라는 function을 만드는데, const formData를 가져와서, 그 formData에 password라는 값과 password2라는 값을 가져와서 두개를 비교
 const checkPassword = () => {

@@ -76,10 +76,18 @@ async def get_image(item_id):
     return Response(content=bytes.fromhex(image_bytes), media_type='image/*')
 
 #signup.html에서 form을 통해서 보내니까 post로 받아야함.
+#사용자를 추가하는 과정
 @app.post('/signup')
-def signup(id:Annotated[str,Form()], password:Annotated[str,Form()]):
-    print(id,password)
+def signup(id:Annotated[str,Form()], 
+           password:Annotated[str,Form()],
+           name:Annotated[str,Form()],
+           email:Annotated[str,Form()]):
+    cur.execute(f"""
+                INSERT INTO users(id,name,email,password)
+                VALUES ('{id}','{name}','{email}','{password}')
+                """)
+    con.commit()
     return '200'
-
+#[숙제] 여기까지는 이미 가입된 유저임에도 가입이 되기 때문에, 이미 가입되어 있는 user인지 판단하는 로직은 생각해서 추가하기.
 
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend") # app.mount ("/"), 이 루트 패스는 맨 마지막에 작성해주는 것이 좋다.

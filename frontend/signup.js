@@ -32,9 +32,14 @@ const handleSubmit = async (event) => {
     });
     //서버에 요청을 하고, await에서 res.json해서 데이터를 받았는데, if 데이터가 200으로 성공했다는 응답을 줬을 때만, 회원가입 성공했다는 메세지를 띄워야 한다.
     const data = await res.json();
+
     if (data === "200") {
-      div.innerText = "회원가입에 성공했습니다!";
-      div.style.color = "blue";
+      // div.innerText = "회원가입에 성공했습니다!";
+      // div.style.color = "blue";
+      //로그인 페이지로 넘어가기 전에 (옛방식이지만) alert사용해서 알림 팝업으로 한 번 띄워주는 것. 현재에는 토스트 메세지로 아래에서 살짝 보여주는 것 많이 사용.
+      alert("회원 가입에 성공했습니다.");
+      // 회원가입 후, 로그인 페이지로 돌아가도록 새파일 login.html 만들어서 보내기.
+      window.location.pathname = "/login.html";
     }
   } else {
     div.innerText = "비밀번호가 같지 않습니다.";

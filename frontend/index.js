@@ -11,6 +11,7 @@ const calcTime = (timestamp) => {
   else if (second > 0) return `${second}초 전`;
   else return "방금 전"; //else만 써서 시간이 undefined가 표시되어 else return으로 "방금 전"이 표시 됨.
 };
+// [개선 필요]: 몇일 전, 몇달 전 추가.
 
 //가장 마지막(최근)에 넣은 데이터가 앞(위)에 올 수 있도록 하기 위해 Array형식으로, [].reverse() 사용하면, Array를 뒤집어주는 문법.  이렇게 넣기.-->  data.reverse().forEach((obj) => {
 //html main에서 (item-list)를 Div로 만들어서, div element로 만들고,
@@ -58,8 +59,22 @@ const renderData = (data) => {
   });
 };
 
+// 여기서 accesstoken을 필요할 때 마다 넣어줄 수 있도록  한다.
 const fetchList = async () => {
-  const res = await fetch("/items");
+  //login.js에서는 setItem("token")을 해두었으니까, 가져올 때는 getItem("token") 안에 있는 값을 accessToken이라는 값으로 가져온다.
+  const accessToken = window.localStorage.getItem("token");
+  const res = await fetch("/items", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (res.status === 401) {
+    alert("로그인이 필요합니다!");
+    window.location.pathname = "/login.html";
+    return;
+  }
+
   const data = await res.json();
   renderData(data);
   //   console.log(data);

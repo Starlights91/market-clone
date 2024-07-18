@@ -1,6 +1,6 @@
 # 백엔드 서버 (Fast API를 통해서 API 만들기.) from FastAPI에서 FastAPI를 import(끌어온다).
 #1번째 라인: fastapi에 import 이중에 하나 response가 있다로 import. 
-from fastapi import FastAPI,UploadFile,Form,Response   #app.post에 image:UploadFile을 위해서 ,UploadFile 추가 & title:Annotated[str,Form()], 때문에 ,Form 추가. , Response 추가.
+from fastapi import FastAPI,UploadFile,Form,Response,Depends   #app.post에 image:UploadFile을 위해서 ,UploadFile 추가 & title:Annotated[str,Form()], 때문에 ,Form 추가. , Response 추가., Depends 추가
 from fastapi.responses import JSONResponse    #from fastapi.responses에 import해서 JSONResponse로 불러온다.
 from fastapi.encoders import jsonable_encoder   #from fastapi.encoders 중에서 import해서 jsonable_encoder를 불러온다.
 from fastapi.staticfiles import StaticFiles
@@ -38,12 +38,18 @@ manager = LoginManager(SECRET,'/login')
 
 # 해당 유저가 DB에 존재하는지를 조회를 해봐야 함 이때 LoginManager key를 같이 조회하기 때문에 @manager.user_loader()를 호출.
 @manager.user_loader()
-def query_user(id):
-    # SQL에서 컬럼명도 같이 가져오는 문법. (이 문법으로 에러 해결: TypeError: tuple indices must be integers or slices, not str)
+# 아래의#엑세스 토큰 id, name, email들이 string타입으로 들어가지 않기 때문에 def query_user(id): 에서 def query_user(data):로 변경.
+def query_user(data):
+    #WHERE_STATEMENTS에 f'''''' 원래는 data는.... 만약에 if type data가 access_token sub아래의 객체 형태로 넘어오게되면, 그 안에 있는 id를 빼서 써야되기 때문에 'dict': 데이터 안에 있는 id값으로 들어가게 된다.
+    WHERE_STATEMENTS = f'id="{data}"'
+    #파이썬은 아래처럼 타입을 지정해주어야 함. 'dict': 으로 하면 string으로 문자열로 인식되니까 그냥 dict:
+    if type(data) == dict:
+        WHERE_STATEMENTS = f'''id="{data["id"]}"'''
+        # SQL에서 컬럼명도 같이 가져오는 문법. (이 문법으로 에러 해결: TypeError: tuple indices must be integers or slices, not str)
     con.row_factory = sqlite3.Row
     cur = con.cursor() # 커서를 현재 위치로 업데이트. cur 라는 속성을 주고, con.cursor () DB에서 cursor라는 개념을 이용해서 특정 insert하거나 select할 때 사용하기 위해 세팅하는 것.
     user = cur.execute(f"""
-                       SELECT * from users WHERE id = '{id}'
+                       SELECT * from users WHERE {WHERE_STATEMENTS}
                        """).fetchone()
     return user
 
@@ -65,11 +71,14 @@ def login(id:Annotated[str,Form()],
     elif password != user['password']:
         raise InvalidCredentialsException
     
+    # 엑세스 토큰: sub안에 객체를 이렇게 'id':user['id'], 'name':'name':user['name'],'email':user['email']로 내려주도록 함.
     access_token = manager.create_access_token(data={
-        'id':user['id'],
-        'name':user['name'],
-        'email':user['email']
-        })
+        'sub': {
+            'id':user['id'],
+            'name':user['name'],
+            'email':user['email']
+        }
+    })
     
     return {'access_token':access_token} #따로 지정해주지 않으면, 서버에서 자동으로 200 상태코드를 내려주는데, 여기에 access_token을 넣어준다.
 
@@ -86,7 +95,7 @@ def signup(id:Annotated[str,Form()],
                 """)
     con.commit()
     return '200'
-#[숙제] 여기까지는 이미 가입된 유저임에도 가입이 되기 때문에, 이미 가입되어 있는 user인지 판단하는 로직은 생각해서 추가하기.
+#[개선 필요] 여기까지는 이미 가입된 유저임에도 가입이 되기 때문에, 이미 가입되어 있는 user인지 판단하는 로직은 생각해서 추가하기.
 
 
 @app.post('/items')
@@ -95,7 +104,8 @@ async def create_item(image:UploadFile,
                 price:Annotated[int,Form()], 
                 description:Annotated[str,Form()], 
                 place:Annotated[str,Form()],
-                insertAt:Annotated[int,Form()]
+                insertAt:Annotated[int,Form()],
+                # user=Depends(manager) #[개선 필요] 서버에서는 유저가 인증된 상태에서만 응답을 내려줄 수 있게 추가 가능. 다만 이 코드만 넣어선 실행이 안되니까, +unauthorized로 된 부분을 로그인/회원가입 페이지로 서버에서 연결해주어야 함.
                 ):
     
     # 받은 데이터를 넣어줘야 하는데,
@@ -112,9 +122,11 @@ async def create_item(image:UploadFile,
     con.commit()
     return '200' #여기까지 다 됐을 때, /docs에서 response body: 200이 나오면 서버쪽에 제대로 들어갔다는 뜻. items에 넣어준 값들이 제대로 들어갔는지 dbeaver를 다시 열어서 db.db > 테이블 > items에서 확인 시, 내가 docs에서 입력했던 값들이 정상적으로 들어간것을 확인할 수 있다. #프론트엔드에서도 처리가 잘 되는지 확인: 
 
+# user=Depends(manager) 를 써서 서버에서는 유저가 인증된 상태에서만 응답을 내려주고, 그렇지 않으면 401 에러를 내려준다.
 @app.get('/items')
-async def get_items():
+async def get_items(user=Depends(manager)):
     # SQL에서 컬럼명도 같이 가져오는 문법.
+    # print(user)
     con.row_factory = sqlite3.Row
     cur = con.cursor()
     rows = cur.execute(f"""

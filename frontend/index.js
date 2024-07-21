@@ -1,18 +1,3 @@
-//한국시간 UTC(세계시간)+9, write.js에서 세계시간 기준이라서, 여기선 -9시간 빼서 세계시간에 맞추기. 만약 실시간으로 시간 변경하게 하고 싶으면 setInterval을 추가하면 1초마다 업데이트 된다.
-const calcTime = (timestamp) => {
-  const curTime = new Date().getTime() - 9 * 60 * 60 * 1000;
-  const time = new Date(curTime - timestamp);
-  const hour = time.getHours();
-  const minute = time.getMinutes();
-  const second = time.getSeconds();
-
-  if (hour > 0) return `${hour}시간 전`;
-  else if (minute > 0) return `${minute}분 전`;
-  else if (second > 0) return `${second}초 전`;
-  else return "방금 전"; //else만 써서 시간이 undefined가 표시되어 else return으로 "방금 전"이 표시 됨.
-};
-// [개선 필요]: 몇일 전, 몇달 전 추가.
-
 //가장 마지막(최근)에 넣은 데이터가 앞(위)에 올 수 있도록 하기 위해 Array형식으로, [].reverse() 사용하면, Array를 뒤집어주는 문법.  이렇게 넣기.-->  data.reverse().forEach((obj) => {
 //html main에서 (item-list)를 Div로 만들어서, div element로 만들고,
 //Div는 .className이 = "item-list";로 html에 명시한대로 넣어준다.

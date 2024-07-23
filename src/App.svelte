@@ -13,6 +13,7 @@
     GoogleAuthProvider,
     signInWithCredential,
   } from "firebase/auth"; // 3가지 다 firebase/auth에 들어있어서 가져온다.
+  // } from "../node_modules/firebase/auth"; //*****테스트 용 ****
   import { onMount } from "svelte";
   import Loading from "./pages/Loading.svelte";
   import MyPage from "./pages/MyPage.svelte";

@@ -22,4 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-firebase.js
+# firebase.js 여기에 추가하니까 날아가니까, 아무 폴더에 속하지 않게 .env 파일 만들어서 넣기.
+.env
+
